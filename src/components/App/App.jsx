@@ -13,98 +13,64 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   const [pictureType, setPictureType] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [page, setPage] = useState(1);
-  const [querty, setQuerty] = useState('');
+  const [resultPage, setResultPage] = useState(1);
+  const [query, setQuery] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState('idle');
-  const [total, setTotal] = useState('0');
- 
+  const [total, setTotal] = useState(0);
+
   const drawGallery = async (page, query) => {
     try {
-      setStatus({ status: 'pending' });
-      pictureType = await getPicture(query, page);
+      setIsLoading(true);
+      const images = await getPicture(page, query);
 
-      if (pictureType.totalHits) {
-        setStatus({ status: 'success' });
-        toast.success(
-          `Hooray! We found ${pictureType.totalHits} pictures for you!`
-        );
+      if (images.totalHits) {
+        toast.success(`Hooray! We found ${images.totalHits} pictures for you!`);
       }
-      if (!pictureType.totalHits) {
-        setStatus({ status: 'error' });
+      if (!images.totalHits) {
         return toast.error(
           'Sorry, there are no images matching your search query. Please try again.'
         );
       } else {
-        setPictureType(prevState => ({
-          pictureType: [...prevState.pictureType, ...pictureType.hits],
-          total: pictureType.totalHits,
-        }));
+        setPictureType(prevState => [...prevState, ...images.hits]);
+        setTotal(images.totalHits);
       }
     } catch {
-      setErrorMessage({
-        errorMessage: 'Something went wrong. We are working on it',
-      });
+      setErrorMessage('Something went wrong. We are working on it');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleFormSubmit = query => {
-    if (query === state.query) {
+  useEffect(() => {
+    if (!query) {
+      return;
+    }
+
+    drawGallery(resultPage, query);
+  }, [resultPage, query]);
+
+  function handleFormSubmit(searchQuery) {
+    if (searchQuery === query) {
       return toast.info('You just asked for this picture');
     }
-
-    this.setState({ pictureType: [], query: query, page: 1, total: 0 });
-  };
+    setPictureType([]);
+    setQuery(searchQuery);
+    setResultPage(1);
+    setTotal(0);
+  }
 
   const loadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+    setResultPage(prevState => prevState.page + 1);
   };
-
-  const useEffect (_, prevState) {
-    if (
-      prevState.page !== this.state.page ||
-      prevState.query !== this.state.query
-    ) {
-      this.drawGallery(this.state.page, this.state.query);
-    }
-  }
-  render() {
-    const { pictureType, status, total, page } = this.state;
-    if (status === 'idle') {
-      return (
-        <div>
-          <SearchBar onSubmit={this.handleFormSubmit} />
-        </div>
-      );
-    }
-    if (status === 'pending') {
-      return (
-        <div>
-          <Loader />
-          <SearchBar onSubmit={this.handleFormSubmit} />
-          <ImageGallery pictureType={pictureType} />
-        </div>
-      );
-    }
-    if (status === 'success') {
-      return (
-        <div onClick={this.toggleModal}>
-          <SearchBar onSubmit={this.handleFormSubmit} />
-          {page === 1 && <ToastContainer autoClose={2000} />}
-          <ImageGallery pictureType={pictureType} />
-          {total > 12 && <Button onLoadMore={this.loadMore} />}
-        </div>
-      );
-    }
-    if (status === 'error') {
-      return (
-        <>
-          <ToastContainer autoClose={2000} />
-          <SearchBar onSubmit={this.handleFormSubmit} />
-        </>
-      );
-    }
-  }
+  return (
+    <div>
+      <SearchBar onSubmit={handleFormSubmit} />
+      {isLoading && <Loader />}
+      {errorMessage && <p>{errorMessage}</p>}
+      {resultPage === 1 && <ToastContainer autoClose={2000} />}
+      <ImageGallery pictureType={pictureType} />
+      {total > 12 && <Button onLoadMore={loadMore} />}
+    </div>
+  );
 }
