@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
 import { getPicture } from 'api/api';
@@ -10,59 +11,58 @@ import { Loader } from 'components/Loader/Loader';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-export class App extends Component {
-  state = {
-    pictureType: [],
-    showModal: false,
-    page: 1,
-    query: '',
-    errorMessage: null,
-    isLoading: false,
-    status: 'idle',
-    total: 0,
-  };
-
-  drawGallery = async (page, query) => {
+export default function App() {
+  const [pictureType, setPictureType] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [querty, setQuerty] = useState('');
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState('idle');
+  const [total, setTotal] = useState('0');
+ 
+  const drawGallery = async (page, query) => {
     try {
-      this.setState({ status: 'pending' });
-      const pictureType = await getPicture(query, page);
+      setStatus({ status: 'pending' });
+      pictureType = await getPicture(query, page);
 
       if (pictureType.totalHits) {
-        this.setState({ status: 'success' });
+        setStatus({ status: 'success' });
         toast.success(
           `Hooray! We found ${pictureType.totalHits} pictures for you!`
         );
       }
       if (!pictureType.totalHits) {
-        this.setState({ status: 'error' });
+        setStatus({ status: 'error' });
         return toast.error(
           'Sorry, there are no images matching your search query. Please try again.'
         );
       } else {
-        this.setState(prevState => ({
+        setPictureType(prevState => ({
           pictureType: [...prevState.pictureType, ...pictureType.hits],
           total: pictureType.totalHits,
         }));
       }
     } catch {
-      this.setState({
+      setErrorMessage({
         errorMessage: 'Something went wrong. We are working on it',
       });
     }
   };
 
-  handleFormSubmit = query => {
-    if (query === this.state.query) {
+  const handleFormSubmit = query => {
+    if (query === state.query) {
       return toast.info('You just asked for this picture');
     }
+
     this.setState({ pictureType: [], query: query, page: 1, total: 0 });
   };
 
-  loadMore = () => {
+  const loadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
-  componentDidUpdate(_, prevState) {
+  const useEffect (_, prevState) {
     if (
       prevState.page !== this.state.page ||
       prevState.query !== this.state.query
