@@ -61,7 +61,7 @@ export default function App() {
   }
 
   const loadMore = () => {
-    setResultPage(prevState => prevState.page + 1);
+    setResultPage(prevState => prevState + 1);
   };
   return (
     <div>
