@@ -1,8 +1,8 @@
 {
-  "name": "goit-react-hw-04-image-finder",
+  "name": "goit-react-hw-04-images",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://bolterbait.github.io/goit-react-hw-04-image-finder/",
+  "homepage": "https://bolterbait.github.io/goit-react-hw-04-images/",
   "dependencies": {
     "axios": "^1.1.3",
     "react": "^18.1.0",
