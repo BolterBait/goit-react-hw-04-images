@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { ImSearch } from 'react-icons/im';
-import { ToastContainer } from 'react-toastify';
+// import { ToastContainer } from 'react-toastify';
 
 import {
   Searchbar,
@@ -21,7 +21,7 @@ export default function SearchBar({ onSubmit, toast }) {
   const handleSubmit = event => {
     event.preventDefault();
     if (query.trim() === '') {
-      return toast.error('Input something');
+      return toast('Input something');
     }
     onSubmit(query);
     setQuery('');
@@ -30,7 +30,7 @@ export default function SearchBar({ onSubmit, toast }) {
   return (
     <Searchbar>
       <SearchForm onSubmit={handleSubmit}>
-        <ToastContainer autoClose={2000} />
+        {/* <ToastContainer autoClose={2000} /> */}
         <SearchFormButton type="submit">
           <ImSearch />
           <span>Search</span>
@@ -51,4 +51,5 @@ export default function SearchBar({ onSubmit, toast }) {
 
 SearchBar.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  toast: PropTypes.func.isRequired,
 };
