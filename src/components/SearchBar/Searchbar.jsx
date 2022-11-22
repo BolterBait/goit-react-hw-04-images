@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { ImSearch } from 'react-icons/im';
-import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 
 import {
@@ -11,72 +10,43 @@ import {
   SearchFormInput,
 } from './Searchbar.styled';
 
-export class SearchBar extends Component {
-  state = {
-    query: '',
-    status: '',
+export default function SearchBar({ onSubmit, toast }) {
+  const [query, setQuery] = useState('');
+
+  const handelTypeChange = event => {
+    const value = event.currentTarget.value.toLowerCase();
+    setQuery(value);
   };
 
-  handelTypeChange = event => {
-    this.setState({ query: event.currentTarget.value.toLowerCase() });
-  };
-
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    if (this.state.query.trim() === '') {
-      this.setState({ status: 'blank' });
+    if (query.trim() === '') {
       return toast.error('Input something');
     }
-    this.props.onSubmit(this.state.query);
-    this.setState({ query: '' });
+    onSubmit(query);
+    setQuery('');
   };
 
-  render() {
-    const { status } = this.state;
-    if (status === '') {
-      return (
-        <Searchbar>
-          <SearchForm onSubmit={this.handleSubmit}>
-            <SearchFormButton type="submit">
-              <ImSearch />
-              <span>Search</span>
-            </SearchFormButton>
+  return (
+    <Searchbar>
+      <SearchForm onSubmit={handleSubmit}>
+        <ToastContainer autoClose={2000} />
+        <SearchFormButton type="submit">
+          <ImSearch />
+          <span>Search</span>
+        </SearchFormButton>
 
-            <SearchFormInput
-              type="text"
-              autoComplete="off"
-              autoFocus
-              placeholder="Search images and photos"
-              value={this.state.query}
-              onChange={this.handelTypeChange}
-            />
-          </SearchForm>
-        </Searchbar>
-      );
-    }
-    if (status === 'blank') {
-      return (
-        <Searchbar>
-          <ToastContainer autoClose={2000} />
-          <SearchForm onSubmit={this.handleSubmit}>
-            <SearchFormButton type="submit">
-              <ImSearch />
-              <span>Search</span>
-            </SearchFormButton>
-
-            <SearchFormInput
-              type="text"
-              autoComplete="off"
-              autoFocus
-              placeholder="Search images and photos"
-              value={this.state.query}
-              onChange={this.handelTypeChange}
-            />
-          </SearchForm>
-        </Searchbar>
-      );
-    }
-  }
+        <SearchFormInput
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          value={query}
+          onChange={handelTypeChange}
+        />
+      </SearchForm>
+    </Searchbar>
+  );
 }
 
 SearchBar.propTypes = {

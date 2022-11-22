@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { getPicture } from 'api/api';
 
 import ImageGallery from 'components/ImageGallery/ImageGallery';
-import { SearchBar } from 'components/SearchBar/Searchbar';
+import SearchBar from 'components/SearchBar/Searchbar';
 import { Button } from 'components/Button/Button';
 import { Loader } from 'components/Loader/Loader';
 

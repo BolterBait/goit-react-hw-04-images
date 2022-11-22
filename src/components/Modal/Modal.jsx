@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { ModalCard, Overlay } from './Modal.styled';
 
 const modalRoot = document.querySelector('#modal-root');
-export default function Modal(img, onClose) {
+export default function Modal({ img, onClose }) {
   useEffect(() => {
     const handleKeyDown = e => {
       if (e.code === 'Escape') {
