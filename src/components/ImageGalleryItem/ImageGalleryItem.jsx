@@ -15,9 +15,7 @@ export default function ImageGalleryItem({ pictureType }) {
   return (
     <GalleryItem>
       <GalleryImage onClick={toggleModal} src={webformatURL} alt="" />
-      {showModal && (
-        <Modal img={largeImageURL} alt="" onClose={() => toggleModal()} />
-      )}
+      {showModal && <Modal img={largeImageURL} alt="" onClose={toggleModal} />}
     </GalleryItem>
   );
 }

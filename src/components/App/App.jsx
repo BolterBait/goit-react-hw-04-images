@@ -68,9 +68,9 @@ export default function App() {
       <SearchBar onSubmit={handleFormSubmit} toast={toast} />
       {isLoading && <Loader />}
       {errorMessage && <p>{errorMessage}</p>}
-      <ToastContainer autoClose={2000} />
+      {resultPage === 1 && <ToastContainer autoClose={2000} />}
       <ImageGallery pictureType={pictureType} />
-      {total > 12 && <Button onLoadMore={loadMore} />}
+      {pictureType.length < total && <Button onLoadMore={loadMore} />}
     </div>
   );
 }
